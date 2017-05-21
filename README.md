@@ -108,7 +108,9 @@ Service文件格式：Service同Action一样也是一个静态类，类名要求
   参数：<br>
     $sql 要执行的语句<br>
   返回值：<br>
-    当sql为查询时，返回值可被用于$this->db->fetch_array()的参数，否则返回是否成功。
+    当sql为查询时，返回值可被用于$this->db->fetch_array()的参数，否则返回是否成功。<br>
+  提示：<br>
+    除该方法需对参数进行防注入处理外其余增删改查方法已对单引号替换，不需要防注入。
 #### fetch_array($query);
   参数：<br>
     $query $this->db->query($sql)的返回值<br>
@@ -134,7 +136,67 @@ Service文件格式：Service同Action一样也是一个静态类，类名要求
 	$result=$this->db->select_arr("users");
 	foreach($result as $row){
 		//这里写处理，$row为每一行的数据，如$row['username']为改行username列的值。
+		//注意，$row中除了有列名为主键的之外还有数组下标为主键的值，因此需要处理后才可以json_encode
 	}
 ```
-  
-  
+#### select_first($name,$req);
+  参数：<br>
+    $name 表名<br>
+    $req 条件数组<br>
+  返回值：<br>
+    返回查询结果的第一条，没有则返回false。<br>
+  使用方法：<br>
+```php
+	$result=$this->db->select_first("users",array(
+		"uid"=>1
+	));//查询uid为1的记录
+	if($result)
+		;//有查询结果的情况
+```
+#### update($table,$list,$tiao);
+  参数：<br>
+    $table 表名<br>
+    $list 要更改的值<br>
+    $tiao 条件数组<br>
+  返回值：<br>
+  	query结果<br>
+  使用方法：<br>
+```php
+	$this->db->update("users",array(
+		"password"=>md5("admin")
+	),array(
+		"uid"=>1,
+		"username"=>"admin"
+	));//更新uid为1且username为admin的用户的password列为md5("admin");
+```
+#### fn_del($table,$c);
+  参数：<br>
+    $table 表名<br>
+    $c 条件数组<br>
+  返回值：<br>
+    query结果<br>
+  使用方法：<br>
+```php
+	$this->db->fn_del("users",array(
+		"uid"=>1
+	));//删除uid为1的用户
+```
+#### fn_insert($table,$name,$arr);
+  参数：<br>
+    $table 表名<br>
+    $name 插入数据列名（可以根据该参数进行排序，如果没有可以填写""，需要则按数组顺序填写元素，如array("uid","username")）<br>
+    $arr 插入行的数据<br>
+  返回值：<br>
+    query结果<br>
+  使用方法：<br>
+```php
+	$this->db->fn_insert("users","",array(
+		"null",
+		"admin",
+		"adminp"
+	));//插入一个第一列自增的第二列为admin，第三列为adminp的行，数据库语句内的null在数组里用字符串null表示。
+```
+#### affected_rows();
+  返回值：影响行数
+#### insert_id();
+  返回值：AUTO_INCREASE列插入的id
