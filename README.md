@@ -71,39 +71,39 @@ Service文件格式：Service同Action一样也是一个静态类，类名要求
   本类主要用于调用数据库。<br>
   在Dao文件夹中创建任意DaoObj类，命名要求与Action相同（同Java，类名需与文件名一致），方便在Service中import("Dao.".类名);调用。<br>
   调用方法：
-  ```php
-    import("Dao.类名");
-    $变量=new 类名();
-    $变量返回=$变量->方法名();
-    $变量->close();
-  ```
+```php
+	import("Dao.类名");
+	$变量=new 类名();
+	$变量返回=$变量->方法名();
+	$变量->close();
+```
   DaoObj定义类结构如下：
-  ```php
-    <?php
-      class 类名{
-        private $db;
-        function __construct(){
-          $this->db=new DB();
-        }
-        function close(){
-          $this->db->close();
-        }
-        function 方法名(参数列表){//正常定义普通方法
-          $返回值=$this->db->DB类的方法(参数);
-          //各种处理
-          return $返回值;
-        }
-      }
-    ?>
-  ```
+```php
+	<?php
+		class 类名{
+			private $db;
+			function __construct(){
+				  $this->db=new DB();
+			}
+			function close(){
+				  $this->db->close();
+			}
+			function 方法名(参数列表){//正常定义普通方法
+				  $返回值=$this->db->DB类的方法(参数);
+				  //各种处理
+				  return $返回值;
+			}
+		}
+	?>
+```
 ### DB类使用方法如下
 #### DB类设置
   属性：<br>
     $host="localhost";<br>
-		$name="数据库用户";<br>
-		$pass="数据库密码";<br>
-		$table="数据库名";<br>
-		$ut='utf8';
+	$name="数据库用户";<br>
+	$pass="数据库密码";<br>
+	$table="数据库名";<br>
+	$ut='utf8';
 #### query($sql);
   参数：<br>
     $sql 要执行的语句<br>
@@ -115,13 +115,13 @@ Service文件格式：Service同Action一样也是一个静态类，类名要求
   返回值：<br>
     如果查询结果为空或全部查完了返回false，否则返回查询的一行数据。
   使用方法：
-  ```php
-    $sql="select * from users";
-    $query=$this->db->query($sql);
-    while($row=$this->db->fetch_array($query)){
-      //...这里写处理
-    }
-  ```
+```php
+	$sql="select * from users";
+	$query=$this->db->query($sql);
+	while($row=$this->db->fetch_array($query)){
+	//...这里写处理
+	}
+```
 #### select_arr($name,$req = array(),$like=false);
   参数：<br>
     $name 表名<br>
@@ -130,11 +130,11 @@ Service文件格式：Service同Action一样也是一个静态类，类名要求
   返回值：<br>
     返回查询结果数组。<br>
   使用方法：<br>
-  ```php
-    $result=$this->db->select_arr("users");
-    foreach($result as $row){
-      //这里写处理，$row为每一行的数据，如$row['username']为改行username列的值。
-    }
-  ```
+```php
+	$result=$this->db->select_arr("users");
+	foreach($result as $row){
+		//这里写处理，$row为每一行的数据，如$row['username']为改行username列的值。
+	}
+```
   
   
