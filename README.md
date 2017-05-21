@@ -200,3 +200,82 @@ Service文件格式：Service同Action一样也是一个静态类，类名要求
   返回值：影响行数
 #### insert_id();
   返回值：AUTO_INCREASE列插入的id
+# View中的S标签
+## 简介：
+View内放置的是前台的网页内容，所有资源应放置在res文件夹下供view调用。view输出在index.php入口文件下，因此相对路径就是入口文件所在位置。
+View中可以嵌入<?php?>，但不建议如此。为了解决前后端分离的问题我们加入了s标签。但在实际使用时依然需要在View前加入如下代码：
+```php
+	<?php
+		if(!isset($indexMod))
+			die();
+	?>
+```
+主要是为了防止非法访问问题。
+## S标签简介
+我们提供了以下标签内容：<br>
+```html
+	<s:iterator value="arr">
+	</s:iterator>
+	<s:property type="item" value="username"/>
+	<s:property value="username"/>
+	<s:if test="f">
+	<s:else />
+	</s:if>
+```
+另外您可以自定义s标签，详见plugins下的S类。<br>
+解析类详见kernel下的ParseS类。
+### 功能介绍
+#### s:iterator 标签
+属性：<br>
+value 对应全局变量$GLOBALS内的指定值，要求获取的值是php的Array类型以用于遍历。<br>
+范例：value="user.uid" 对应 $GLOBALS\['user']\['uid'];<br>
+您也可获取session中的内容，获取方法：value="session.username"<br>
+
+#### s:property 标签
+属性：<br>
+value 同s:iterator的value，不过要求获取的值是php的字符串或数字等可直接输出的类型。<br>
+范例：value="user.uid" 对应 $GLOBALS\['user']\['uid'];
+type 指定为item时，必须与s:iterator搭配，表示该iterator中的循环元素。
+范例：
+```html
+	<s:iterator value="users">
+		a
+		<s:property type="item" value="user.uid" />
+		b
+		<s:property type="item" value="user.username" />
+		c
+	</s:iterator>
+```
+对应php语句为
+```php
+	foreach($GLOBALS['users'] as $item){
+		echo "a";
+		echo $item['user']['uid'];
+		echo "b";
+		echo $item['user']['username'];
+		echo "c";
+	}
+```
+
+#### s:if 标签
+属性：<br>
+test 调用Test.php中Test类的静态方法，其它属性值作为参数传入（不能在属性中嵌入s标签），当前运行状态可以通过kernel.HookParse类获取<br>
+范例：
+```html
+	<s:if test="test" v="a">
+		<s:property value="user.username" />
+	<s:else />
+		<s:property value="user.password" />
+	</s:if>
+```
+等价于：
+```php
+	if(Test::test(array("test"=>"test","v"=>"a")))
+		echo $GLOBALS['user']['username'];
+	else
+		echo $GLOBALS['user']['password'];
+```
+## 自定义标签
+### S类
+#### 简介
+S类为自定义s标签插件类。当遇到不认识的s标签时，parse解释器会调用S插件内的以参数命名的方法执行其功能。每要输出一条数据时，index都会调用onText或onParamText两个参数中的一个。如果是普通文本则调用onText否则是s标签生成的就调用另一个。
