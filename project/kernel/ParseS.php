@@ -76,7 +76,7 @@
 							$regex="/^(.*?)>(.*?|\n*?)$/is";
 							if(preg_match_all($regex, $r, $m)){
 								$r=array(
-									"type"=>"/".$type,
+									"type"=>"/".$m[1][0],
 									"param"=>array()
 								);
 								array_push($resultarr,$r);
@@ -95,6 +95,8 @@
 			return $resultarr;
 		}
 		public static function getpointvalue($arr,$str){
+			if($str==="")
+				return $arr;
 			$r=explode(".", $str);
 			if(count($r)==1)
 				return $arr[$str];
@@ -141,6 +143,7 @@
 							array_push($a, $r['value']);
 							array_push($a, $r['id']);
 						}
+						array_pop($a);//最后一个数组是我们要的
 						if(count(self::getpointvalue($arr,join(".",$a)))==0){//遍历内容不存在
 							array_pop($iterator_arr);
 							continue;
@@ -183,15 +186,19 @@
 						array_pop($canecho_arr);
 						break;
 					default:
-						$method=$tree[$line]['type'];
-						$params=$tree[$line]['param'];
-						$a="";
-						if(substr($method, 0, 1)=='/')
-							$a=call_user_func("S::_".substr($method, 1));
-						else
-							$a=call_user_func("S::".$method,$params);
-						if(!in_array(0, $canecho_arr))
-							$result.=$a;
+						try{
+							$method=$tree[$line]['type'];
+							$params=$tree[$line]['param'];
+							$a="";
+							if(substr($method, 0, 1)=='/')
+								$a=call_user_func("S::_".substr($method, 1));
+							else
+								$a=call_user_func("S::".$method,$params);
+							if(!in_array(0, $canecho_arr))
+								$result.=$a;
+						}catch(Exception $e){
+							continue;
+						}
 						break;
 				}
 			}

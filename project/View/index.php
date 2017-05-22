@@ -2,4 +2,6 @@
 	if(!isset($GLOBALS['indexMod']))
 		die();
 ?>
-<s:g>test</s:g>
+<s:iterator value="g">
+	<s:property type="item" value="" /> 
+</s:iterator>

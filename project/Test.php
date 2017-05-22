@@ -7,5 +7,8 @@
 		public static function t($params){
 			return true;
 		}
+		public static function f($params){
+			return false;
+		}
 	}
 ?>
