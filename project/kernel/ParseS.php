@@ -94,14 +94,22 @@
 			}
 			return $resultarr;
 		}
-		public static function getpointvalue($arr,$str){
+		public static $pointvalue=array();
+		public static function getpointvalue($arr,$str,$ref=false,$refid=false){
 			if($str==="")
 				return $arr;
 			$r=explode(".", $str);
-			if(count($r)==1)
+			if(count($r)==1){
+				if(substr($str, 0, 1)=="#")
+					return self::$pointvalue[$str];
 				return $arr[$str];
+			}
 			$c=array_shift($r);
-			return self::getpointvalue($arr[$c],join(".",$r));
+			if(substr($c,0,1)=='#'){
+				self::$pointvalue[$c]=array_keys($ref)[$refid];
+				return self::getpointvalue($ref[array_keys($ref)[$refid]],join(".",$r),$ref,array_keys($ref)[$refid]);
+			}
+			return self::getpointvalue($arr[$c],join(".",$r),$arr,$c);
 		}
 		function parse($tree,$arr){//语法分析生成目标代码
 			//if语句，session调用，$arr调用

@@ -257,6 +257,22 @@ type 指定为item时，必须与s:iterator搭配，表示该iterator中的循�
 	}
 ```
 
+如果需要对属性进行遍历则需要如下写法：
+```html
+	<s:iterator value="pro">
+		<s:iterator value="#sheng">
+			<s:property value="#sheng" />=><s:property value="" />
+		</s:iterator>
+	</s:iterator>
+```
+对应php语句为
+```php
+	foreach($GLOBALS['pro'] as $sheng=>$shi){
+		echo $sheng;
+		echo "=>";
+		echo $shi;//当property的value为空时其值为为当前遍历key=>value里的value。
+	}
+```
 #### s:if 标签
 属性：<br>
 test 调用Test.php中Test类的静态方法，其它属性值作为参数传入（不能在属性中嵌入s标签），当前运行状态可以通过kernel.HookParse类获取<br>
