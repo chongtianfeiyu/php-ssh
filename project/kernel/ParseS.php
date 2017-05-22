@@ -24,6 +24,7 @@
 				$regex="/^(.*?)>(.*?|\n*?)$/is";
 				if(preg_match_all($regex, $row, $m)){
 					$p=$m[1][0];
+					$type="";
 					$param=array();
 					$isend=false;
 					if(endWith(trim($p),"/"))
@@ -31,27 +32,31 @@
 					$item=explode(" ", $p);
 					if(count($item)>1){
 						$t=array_shift($item);
-						$m=array($t,join(" ",$item));
+						$p=join(" ",$item);
+						$type=$t;
+					}else{
+						$type=$p;
+						$p="";
 					}
 					$reg='/(.*?)="(.*?[^\\\\])"/is';
 					if(preg_match_all($reg, $p, $mat)){
 						for($i=0;$i<count($mat[1]);$i++)
 							$param[trim($mat[1][$i])]=trim($mat[2][$i]);
 						$arr=array(
-							"type"=>$m[1][0],
+							"type"=>$type,
 							"param"=>$param
 						);
 						array_push($resultarr,$arr);
 					}else{
 						$arr=array(
-							"type"=>$m[1][0],
+							"type"=>$type,
 							"param"=>array()
 						);
 						array_push($resultarr,$arr);
 					}
 					if($isend){
 						$arr=array(
-							"type"=>"/".$m[1][0],
+							"type"=>"/".$type,
 							"param"=>array()
 						);
 						array_push($resultarr,$arr);
@@ -71,7 +76,7 @@
 							$regex="/^(.*?)>(.*?|\n*?)$/is";
 							if(preg_match_all($regex, $r, $m)){
 								$r=array(
-									"type"=>"/".$m[1][0],
+									"type"=>"/".$type,
 									"param"=>array()
 								);
 								array_push($resultarr,$r);
@@ -158,7 +163,7 @@
 								$result.=S::onParamText(self::getpointvalue($arr,join(".",$a).".".$tree[$line]['param']['value']));
 						}else{
 							if(!in_array(0, $canecho_arr))
-								$result.=S::onParamText(self::getpointvalue($tree[$line]['param']['value'],$arr));
+								$result.=S::onParamText(self::getpointvalue($arr,$tree[$line]['param']['value']));
 						}
 						break;
 					case '/property':
