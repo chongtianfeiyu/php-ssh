@@ -296,3 +296,20 @@ test 调用Test.php中Test类的静态方法，其它属性值作为参数传入
 #### 简介
 S类为自定义s标签插件类。当遇到不认识的s标签时，parse解释器会调用S插件内的以参数命名的方法执行其功能。每要输出一条数据时，index都会调用onText或onParamText两个参数中的一个。如果是普通文本则调用onText否则是s标签生成的就调用另一个。
 ![image](https://github.com/similing4/php-ssh/blob/master/parse.png)
+#### S类方法命名
+```html
+<s:g a="b">XXX</s:g>
+```
+这段代码用S类拦截需要定义两个标签：
+```php
+public static function g($param){//<s:g>时执行的内容，$param是属性键值对的array
+	$a=$param["a"];
+	//...
+	return "输出内容";
+}
+public static function _g(){//</s:g>时执行的内容
+	//...
+	return "输出内容";
+}
+```
+如果需要对内部的内容进行控制，则需要在onText内对文本进行处理。您可以通过设置静态变量标志判断该text是不是标签内的内容。如果需要对内容内的标签进行处理，请使用kernel.HookParse类
