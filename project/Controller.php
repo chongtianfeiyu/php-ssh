@@ -62,6 +62,7 @@
 		}
 	}
 	if(isset($_GET['action'])&&isset($_GET['method'])){
+		require("kernel/Use.php");
 		Controller::init();
 		Controller::doAction($_GET['action'],$_GET['method']);
 	}
