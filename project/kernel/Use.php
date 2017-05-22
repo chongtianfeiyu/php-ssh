@@ -5,6 +5,7 @@
 	*/
 	function import($name){
 		global $indexMod;
+		global $Mod;
 		$arr=explode(".", $name);
 		$class_name=$arr[count($arr)-1];
 		if(!class_exists($class_name,false))

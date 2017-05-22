@@ -21,13 +21,18 @@
 					array_push($resultarr,$row);
 					continue;
 				}
-				$regex="/^(.*?) (.*?)>(.*?|\n*?)$/is";
+				$regex="/^(.*?)>(.*?|\n*?)$/is";
 				if(preg_match_all($regex, $row, $m)){
-					$p=$m[2][0];
+					$p=$m[1][0];
 					$param=array();
 					$isend=false;
 					if(endWith(trim($p),"/"))
 						$isend=true;
+					$item=explode(" ", $p);
+					if(count($item)>1){
+						$t=array_shift($item);
+						$m=array($t,join(" ",$item));
+					}
 					$reg='/(.*?)="(.*?[^\\\\])"/is';
 					if(preg_match_all($reg, $p, $mat)){
 						for($i=0;$i<count($mat[1]);$i++)
@@ -51,7 +56,7 @@
 						);
 						array_push($resultarr,$arr);
 					}
-					$row=$m[3][0];
+					$row=$m[2][0];
 					$row=explode("</s:", $row);
 					$first2=true;//第一个是特例
 					foreach ($row as $r) {
@@ -101,7 +106,6 @@
 			HookParse::$iterator_arr=&$iterator_arr;
 			HookParse::$tree=&$tree;
 			HookParse::$arr=&$arr;
-			
 			for($line=0;$line<count($tree);$line++){
 				switch ($tree[$line]['type']) {
 					case 'text':

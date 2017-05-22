@@ -15,7 +15,6 @@
 		public static function init(){
 			if(!isset($_SESSION))
 				session_start();
-			$GLOBALS=array();//全局变量用于传参
 			import("Dao.DB");
 			import("Filter");
 		}

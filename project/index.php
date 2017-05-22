@@ -4,7 +4,7 @@
 	*		功能：		入口文件
 	*/
 	session_start();
-	$indexMod = '防mod被直接调用';
+	$GLOBALS['indexMod'] = '防mod被直接调用';
 	function endWith($haystack, $needle) {
 		$length = strlen($needle);
 		if($length == 0)
