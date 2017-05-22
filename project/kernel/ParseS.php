@@ -38,6 +38,8 @@
 						$type=$p;
 						$p="";
 					}
+					$p=str_replace('""', '" "', $p);
+					$p=str_replace("''", "' '", $p);
 					$reg='/(.*?)="(.*?[^\\\\])"/is';
 					if(preg_match_all($reg, $p, $mat)){
 						for($i=0;$i<count($mat[1]);$i++)
