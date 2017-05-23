@@ -8,6 +8,7 @@
 	*/
 	class ParseS{
 		public static function makeTree($code){//词法分析
+			import("kernel.simple_html_dom");
 			$resultarr=array();
 			$first=true;//第一个是特例
 			$all=explode("<s:", $code);
@@ -21,78 +22,78 @@
 					array_push($resultarr,$row);
 					continue;
 				}
-				$regex="/^(.*?)>(.*?|\n*?)$/is";
-				if(preg_match_all($regex, $row, $m)){
-					$p=$m[1][0];
-					$type="";
-					$param=array();
-					$isend=false;
-					if(endWith(trim($p),"/"))
-						$isend=true;
-					$item=explode(" ", $p);
-					if(count($item)>1){
-						$t=array_shift($item);
-						$p=join(" ",$item);
-						$type=$t;
-					}else{
-						$type=$p;
-						$p="";
-					}
-					$p=str_replace('""', '" "', $p);
-					$p=str_replace("''", "' '", $p);
-					$reg='/(.*?)="(.*?[^\\\\])"/is';
-					if(preg_match_all($reg, $p, $mat)){
-						for($i=0;$i<count($mat[1]);$i++)
-							$param[trim($mat[1][$i])]=trim($mat[2][$i]);
-						$arr=array(
-							"type"=>$type,
-							"param"=>$param
-						);
-						array_push($resultarr,$arr);
-					}else{
-						$arr=array(
-							"type"=>$type,
-							"param"=>array()
-						);
-						array_push($resultarr,$arr);
-					}
-					if($isend){
-						$arr=array(
-							"type"=>"/".$type,
-							"param"=>array()
-						);
-						array_push($resultarr,$arr);
-					}
-					$row=$m[2][0];
-					$row=explode("</s:", $row);
-					$first2=true;//第一个是特例
-					foreach ($row as $r) {
-						if($first2){
-							$first2=false;
-							$r=array(
-								"type"=>"text",
-								"text"=>$r
-							);
-							array_push($resultarr,$r);
-						}else{
-							$regex="/^(.*?)>(.*?|\n*?)$/is";
-							if(preg_match_all($regex, $r, $m)){
-								$r=array(
-									"type"=>"/".$m[1][0],
-									"param"=>array()
-								);
-								array_push($resultarr,$r);
-								$r=array(
-									"type"=>"text",
-									"text"=>$m[2][0]
-								);
-								array_push($resultarr,$r);
-							}
+				function gindex($row){
+					$xx=false;
+					$instr=false;
+					for($i=0;$i<strlen($row);$i++){
+						switch(substr($row, $i, 1)){
+							case "\\":
+								$xx=true;
+								break;
+							case '>':
+								if(!$instr)
+									return $i;
+								break;
+							case "\"":
+							case "'":
+								if(!$xx)
+									$instr=!$instr;
+							default:
+								$xx=false;
+								break;
 						}
 					}
-					$first=false;
-					continue;
 				}
+				$index=gindex($row);
+				$p=substr($row, 0,$index+1);
+				$isend=false;
+				if(endWith(trim($p),"/"))
+					$isend=true;
+				$p="<".$p;
+				$dom=str_get_html($p);
+				$type=$dom->root->children[0]->tag;
+				$param=$dom->root->children[0]->attr;
+				$dom->clear();
+				$arr=array(
+					"type"=>$type,
+					"param"=>$param
+				);
+				array_push($resultarr,$arr);
+				if($isend){
+					$arr=array(
+						"type"=>"/".$type,
+						"param"=>array()
+					);
+					array_push($resultarr,$arr);
+				}
+				$row=substr($row, $index+1);
+				$row=explode("</s:", $row);
+				$first2=true;//第一个是特例
+				foreach ($row as $r) {
+					if($first2){
+						$first2=false;
+						$r=array(
+							"type"=>"text",
+							"text"=>$r
+						);
+						array_push($resultarr,$r);
+					}else{
+						$index=gindex($r);
+						$p=substr($row, 0,$index);
+						$r=array(
+							"type"=>"/".p,
+							"param"=>array()
+						);
+						array_push($resultarr,$r);
+						$r=array(
+							"type"=>"text",
+							"text"=>substr($row, $index+1)
+						);
+						array_push($resultarr,$r);
+					}
+				}
+				$first=false;
+				continue;
 			}
 			return $resultarr;
 		}

@@ -66,28 +66,27 @@
 				'ul' =>array('class','style'),
 				'video' =>array('autoplay','controls','loop','preload','src','height','width','class','style')
 			);
-			return preg_replace_callback("/<(.*?)>/is",function($match){
-				$match=$match[1];
-				$tag=explode(" ", $match);
-				$tag=$tag[0];
-				$t=explode(" ", $match);
-				array_shift($t);
-				$params=join(" ",$t);
-				if(substr($tag,0,1)=='/')
-					return "<".$tag.">";
-				if(!in_array($tag, array_keys($allowParams)));
-					return "";
-				$params=str_replace('""', '" "', $params);
-				$params=str_replace("''", "' '", $params);
-				$param=preg_replace_callback("/(.*?)=['\"](.*?[^\\\\])['\"]/is",function($m){
-					if(!in_array($m[1], $allowParams[$tag]))
-						return "";
-					if($m[1]=="href"&&substr($m[2], 0, 10)=="javascript")
-						return "href=\"#\"";
-					return $m[0];
-				},$params);
-				return "<".$tag." ".$params.">";
-			},$uedata);
+			import("kernel.simple_html_dom");
+			$dom=str_get_html($uedata);
+			$doms=$dom->root->children;
+			function dfs($doms,$allowParams){
+				foreach ($doms as $domitem) {
+					if(!empty($domitem->children))
+						dfs($domitem->nodes,$allowParams);
+					if(!in_array($domitem->tag, array_keys($allowParams))){
+						$domitem->outertext="";
+					}else{
+						foreach ($domitem->attr as $key => $value) {
+							if(!in_array($key, $allowParams[$domitem->tag]))
+								$domitem->removeAttribute($key);
+						}
+					}
+				}
+			}
+			dfs($doms,$allowParams);
+			$html=$dom->outertext;
+			$dom->clear();
+			return $html;
 		}
 	}
 ?>
