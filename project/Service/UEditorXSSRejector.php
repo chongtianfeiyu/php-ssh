@@ -63,8 +63,8 @@
 				'tr' =>array('rowspan','align','valign','class','style'),
 				'tt' =>array(),
 				'u' =>array(),
-				'ul' =>array('class','style'),
-				'video' =>array('autoplay','controls','loop','preload','src','height','width','class','style')
+				'ul' =>array('class','style')//,
+				//'video' =>array('autoplay','controls','loop','preload','src','height','width','class','style')
 			);
 			import("kernel.simple_html_dom");
 			$dom=str_get_html($uedata);
