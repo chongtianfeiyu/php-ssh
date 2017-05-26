@@ -5,6 +5,7 @@
 <html>
 	<head>
 		<title>UEditorDemo</title>
+		<s:css src="index" />
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 		<script type="text/javascript" charset="utf-8" src="Tools/Editor/ueditor.config.js"></script>
 		<script type="text/javascript" charset="utf-8" src="Tools/Editor/ueditor.all.min.js"> </script>

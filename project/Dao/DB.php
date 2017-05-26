@@ -1,7 +1,7 @@
 ﻿<?php
 	/*      作者：     similing4
 	*       创作时间： 2016.9.10
-	*       功能：     用于调用数据库进行操作。
+	*       功能：     用于MySql调用数据库进行操作。
 	*/
 	class DB{
 		private $host="localhost";

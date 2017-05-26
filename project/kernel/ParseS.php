@@ -12,6 +12,28 @@
 			$resultarr=array();
 			$first=true;//第一个是特例
 			$all=explode("<s:", $code);
+			function gindex($row){
+				$xx=false;
+				$instr=false;
+				for($i=0;$i<strlen($row);$i++){
+					switch(substr($row, $i, 1)){
+						case "\\":
+							$xx=true;
+							break;
+						case '>':
+							if(!$instr)
+								return $i;
+							break;
+						case "\"":
+						case "'":
+							if(!$xx)
+								$instr=!$instr;
+						default:
+							$xx=false;
+							break;
+					}
+				}
+			}
 			foreach ($all as $row) {
 				if($first){//特例情况,不可能有/s:
 					$first=false;
@@ -21,28 +43,6 @@
 					);
 					array_push($resultarr,$row);
 					continue;
-				}
-				function gindex($row){
-					$xx=false;
-					$instr=false;
-					for($i=0;$i<strlen($row);$i++){
-						switch(substr($row, $i, 1)){
-							case "\\":
-								$xx=true;
-								break;
-							case '>':
-								if(!$instr)
-									return $i;
-								break;
-							case "\"":
-							case "'":
-								if(!$xx)
-									$instr=!$instr;
-							default:
-								$xx=false;
-								break;
-						}
-					}
 				}
 				$index=gindex($row);
 				$p=substr($row, 0,$index+1);
@@ -109,8 +109,9 @@
 			}
 			$c=array_shift($r);
 			if(substr($c,0,1)=='#'){
-				self::$pointvalue[$c]=array_keys($ref)[$refid];
-				return self::getpointvalue($ref[array_keys($ref)[$refid]],join(".",$r),$ref,array_keys($ref)[$refid]);
+				$ap=array_keys($ref);
+				self::$pointvalue[$c]=$ap[$refid];
+				return self::getpointvalue($ref[$ap[$refid]],join(".",$r),$ref,$ap[$refid]);
 			}
 			return self::getpointvalue($arr[$c],join(".",$r),$arr,$c);
 		}
@@ -195,6 +196,50 @@
 						break;
 					case '/if':
 						array_pop($canecho_arr);
+						break;
+					case 'css':
+						if(!in_array(0, $canecho_arr)){
+							$path="assests/css/";
+							$params=$tree[$line]['param'];
+							if(isset($params['src'])){
+								$result.="<link href=\"".$path.str_replace(".", "/", $params['src']).".css\" rel=\"stylesheet\" type=\"text/css\">";
+							}else{
+								$result.="<link>";
+							}
+						}
+						break;
+					case '/css':
+						$result.="</link>";
+						break;
+					case 'js':
+						if(!in_array(0, $canecho_arr)){
+							$path="assests/js/";
+							$params=$tree[$line]['param'];
+							if(isset($params['src']))
+								$result.="<script src=\"".$path.str_replace(".", "/", $params['src']).".js\" type=\"text/javascript\">";
+						}
+						break;
+					case '/js':
+						if(!in_array(0, $canecho_arr))
+							$result.="</script>";
+						break;
+
+					case 'img':
+						if(!in_array(0, $canecho_arr)){
+							$path="assests/images/";
+							$params=$tree[$line]['param'];
+							$par="";
+							foreach ($params as $key => $value) {
+								if($key=="src")
+									$value=str_replace(".", "/", $value);
+								$par.=$key."=\"".$value."\" ";
+							}
+							$result.="<img ".$par.">";
+						}
+						break;
+					case '/img':
+						if(!in_array(0, $canecho_arr))
+							$result.="</img>";
 						break;
 					default:
 						try{

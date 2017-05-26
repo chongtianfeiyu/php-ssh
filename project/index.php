@@ -20,6 +20,7 @@
 	import("plugins.S");
 	import("kernel.HookParse");
 	import("kernel.ParseS");
+	import("kernel.Core");
 	import("Test");
 	Controller::init();
 	ob_start();
