@@ -291,6 +291,39 @@ test 调用Test.php中Test类的静态方法，其它属性值作为参数传入
 	else
 		echo $GLOBALS['user']['password'];
 ```
+#### s:css 标签
+属性：<br>
+src css文件的名字
+范例：
+```html
+	<s:css src="m.index" />
+```
+等价于
+```html
+	<link href="assests/css/m/index.css"  rel="stylesheet" type="text/css" />
+```
+#### s:js 标签
+属性：<br>
+src js文件的名字
+范例：
+```html
+	<s:js src="m.index" />
+```
+等价于
+```html
+	<script src="assests/m/index.js"  type="text/javascript" />
+```
+#### s:img 标签
+属性：<br>
+src img文件的带后缀名字(可以加其他参数)
+范例：
+```html
+	<s:img src="m.logo.png" width="100%"/>
+```
+等价于
+```html
+	<img src="assests/images/m/logo.png" width="100%" />
+```
 ## 自定义标签
 ### S类
 #### 简介

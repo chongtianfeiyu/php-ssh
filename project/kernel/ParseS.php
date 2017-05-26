@@ -45,11 +45,11 @@
 					continue;
 				}
 				$index=gindex($row);
-				$p=substr($row, 0,$index+1);
+				$p=substr($row, 0,$index);
 				$isend=false;
 				if(endWith(trim($p),"/"))
 					$isend=true;
-				$p="<".$p;
+				$p="<".$p.">";
 				$dom=str_get_html($p);
 				$type=$dom->root->children[0]->tag;
 				$param=$dom->root->children[0]->attr;
@@ -232,6 +232,7 @@
 							foreach ($params as $key => $value) {
 								if($key=="src")
 									$value=str_replace(".", "/", $value);
+								$value=substr_replace($value, ".", strrpos($value,'/'), 1);
 								$par.=$key."=\"".$value."\" ";
 							}
 							$result.="<img ".$par.">";
