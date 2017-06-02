@@ -22,7 +22,9 @@
 	import("kernel.ParseS");
 	import("kernel.Core");
 	import("Test");
+	ob_start();
 	Controller::init();
+	ob_clean();
 	ob_start();
 	import("Mod.".$_GET['mod']);
 	$code=ob_get_contents();

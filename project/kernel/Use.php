@@ -11,4 +11,12 @@
 		if(!class_exists($class_name,false))
 			require_once(dirname(__FILE__)."/../".join("/",$arr).".php");
 	}
+	function useModel($name){
+		global $indexMod;
+		global $Mod;
+		$arr=explode(".", $name);
+		$class_name=$arr[count($arr)-1];
+		if(!class_exists($class_name,false))
+			require_once(dirname(__FILE__)."/../Service/model/".join("/",$arr).".php");
+	}
 ?>

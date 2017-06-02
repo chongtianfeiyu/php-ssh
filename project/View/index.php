@@ -18,6 +18,7 @@
 			</div>
 			<input type="submit">
 		</form>
+		<s:checkcode />
 		<script type="text/javascript">
 			var ue = UE.getEditor('editor');
 			ue.ready(function(){

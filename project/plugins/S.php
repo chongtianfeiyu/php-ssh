@@ -16,5 +16,11 @@
 		public static function _g(){
 			return "gend";
 		}
+		public static function checkcode(){
+			return "<img src='index.php?mod=CheckCode'>";
+		}
+		public static function _checkcode(){
+			return "</img>";
+		}
 	}
 ?>
