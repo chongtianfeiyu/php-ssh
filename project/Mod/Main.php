@@ -5,6 +5,6 @@
 	*/
 	if(!isset($GLOBALS['indexMod']))
 		die();
-	Controller::doAction("TestAction","doAction",array("1"));
+	//这里通过Controller::doAction调用Action的method，没有可以不写
 	Controller::showView("index");
 ?>

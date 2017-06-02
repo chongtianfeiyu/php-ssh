@@ -4,15 +4,13 @@
 ?>
 <html>
 	<head>
-		<title>UEditorDemo</title>
-		<s:css src="index" />
-		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-		<script type="text/javascript" charset="utf-8" src="Tools/Editor/ueditor.config.js"></script>
-		<script type="text/javascript" charset="utf-8" src="Tools/Editor/ueditor.all.min.js"> </script>
-		<script type="text/javascript" charset="utf-8" src="Tools/Editor/lang/zh-cn/zh-cn.js"></script>
+		<title>测试主页，默认页面的Mod为Main</title>
+		<s:bootstrap />
+		<s:ueditor />
+		<meta charset="utf-8" />
 	</head>
 	<body>
-		<form action="Controller.php?action=TestAction&method=testUE" method="POST">
+		<form action="index.php?mod=Main" method="POST">
 			<div style="width:100%">
 				<script id="editor" name="text" type="text/plain" style="width:1024px;height:500px;"></script>
 			</div>
@@ -22,7 +20,7 @@
 		<script type="text/javascript">
 			var ue = UE.getEditor('editor');
 			ue.ready(function(){
-				ue.setContent('<s:property value="text">');
+				ue.setContent('<s:property value="text">');//这里可以通过Service修改$GLOBALS['text']修改其值
 			});
 		</script>
 	</body>

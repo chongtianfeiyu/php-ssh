@@ -4,11 +4,8 @@
 	*		功能：		用于s标签if语句的判断功能
 	*/
 	class Test{
-		public static function t($params){
-			return true;
-		}
-		public static function f($params){
-			return false;
+		public static function hasSession($params){
+			return isset($_SESSION[$params['key']]);
 		}
 	}
 ?>

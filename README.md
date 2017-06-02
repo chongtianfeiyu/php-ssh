@@ -345,4 +345,7 @@ public static function _g(){//</s:g>时执行的内容
 	return "输出内容";
 }
 ```
-如果需要对内部的内容进行控制，则需要在onText内对文本进行处理。您可以通过设置静态变量标志判断该text是不是标签内的内容。如果需要对内容内的标签进行处理，请使用kernel.HookParse类
+如果需要对内部的内容进行控制，则需要在onText内对文本进行处理。您可以通过设置静态变量标志判断该text是不是标签内的内容。如果需要对内容内的标签进行处理，请使用kernel.HookParse类<br>
+我们已经预写了一些s标签，如：<br>
+s:checkcode标签用于显示验证码，验证码类：Service.model.ValidateCode，服务：Service.CheckCodeService。需要验证验证码可以使用Controller::doService("CheckCodeService","checkCode",验证码);方法。返回真伪值表示验证码是否正确。
+s:jquery、s:tether、s:bootstrap、s:ueditor标签用于引用各前端js与css文件。详情请见主页范例。

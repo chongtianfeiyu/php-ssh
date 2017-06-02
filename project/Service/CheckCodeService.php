@@ -5,6 +5,7 @@
 			$_vc = new ValidateCode();
 			$_vc->doimg();
 			$_SESSION['check_code'] = $_vc->getCode();
+			return 1;
 		}
 		public static function checkCode($code){
 			$b=false;
