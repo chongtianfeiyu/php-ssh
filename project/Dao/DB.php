@@ -6,8 +6,8 @@
 	class DB{
 		private $host="localhost";
 		private $name="root";
-		private $pass="xinqidian";
-		private $table="homework";
+		private $pass="root";
+		private $table="test";
 		private $ut='utf8';
 		function __construct(){
 			$this->connect();
