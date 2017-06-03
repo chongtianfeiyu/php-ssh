@@ -1,0 +1,1 @@
+欢迎您<s:property value="session.username">

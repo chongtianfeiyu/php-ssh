@@ -9,9 +9,6 @@
 	*					2017.5.20		所有require改用import
 	*/
 	class Controller{
-		public static $action=array(
-			"index"=>"Main",
-		);//跳转目标mod
 		public static function init(){
 			if(!isset($_SESSION))
 				session_start();
@@ -29,10 +26,10 @@
 			$result = call_user_func($ActionName."::".$method,$param);
 			if($result!=1){
 				if(!isset($GLOBALS['error']))
-					header("Location:index.php?mod=".Controller::$action[$result]);
+					header("Location:index.php?mod=".$result);
 				else{
 					Controller::alertErr();
-					echo "<script>location.href='index.php?mod=".Controller::$action[$result]."';</script>";
+					echo "<script>location.href='index.php?mod=".$result."';</script>";
 				}
 			}else{
 				if(isset($GLOBALS['error']))
@@ -52,11 +49,13 @@
 		}
 		public static function showView($viewname){
 			//传入View名执行，务必不能直接或间接通过用户请求控制本参数
+			header("Content-type: text/html; charset=utf-8");
 			if(!file_exists(dirname(__FILE__)."/View/".$viewname.".php"))
 				die("error");
 			import("View.".$viewname);
 		}
 		public static function alertErr(){
+			header("Content-type: text/html; charset=utf-8");
 			if(isset($GLOBALS['error']))
 				echo "<script>alert('".$GLOBALS['error']."');</script>";
 		}
@@ -73,7 +72,6 @@
 		Controller::doAction("Action的名字","Action的方法");
 		Action中所有参数全部使用$GLOBALS传递
 		import调用方法只能用于Mod中。
-		返回其他字符串则在Controller::$action中定义跳转，方便运行维护
 	*/
 
 	/*
