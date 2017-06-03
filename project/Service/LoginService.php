@@ -1,6 +1,10 @@
 <?php
 	class LoginService{
 		public static function login(){
+			if(!isset($_POST['code'])||!Controller::doService("CheckCodeService","checkCode",$_POST['code'])){
+				$GLOBALS['error']="验证码错误";
+				return false;;
+			}
 			if(!isset($_POST['username'])||!isset($_POST['password'])){
 				$GLOBALS['error']="参数不全";
 				return false;
