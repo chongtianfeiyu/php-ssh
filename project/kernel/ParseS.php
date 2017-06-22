@@ -79,9 +79,10 @@
 						array_push($resultarr,$r);
 					}else{
 						$index=gindex($r);
+						$row=$r;
 						$p=substr($row, 0,$index);
 						$r=array(
-							"type"=>"/".p,
+							"type"=>"/".$p,
 							"param"=>array()
 						);
 						array_push($resultarr,$r);
