@@ -214,10 +214,10 @@ View中可以嵌入<?php?>，但不建议如此。为了解决前后端分离的
 ## S标签简介
 我们提供了以下标签内容：<br>
 ```html
-	<s:iterator value="arr">
+	<s:iterator value="arr" k="arrk" v="arrv">
 	</s:iterator>
-	<s:property type="item" value="username"/>
-	<s:property value="username"/>
+	<s:property value="arrv.username"/>
+	<s:property value="arrv.password"/>
 	<s:if test="f">
 	<s:else />
 	</s:if>
@@ -238,39 +238,39 @@ value 同s:iterator的value，不过要求获取的值是php的字符串或数�
 type 指定为item时，必须与s:iterator搭配，表示该iterator中的循环元素。
 范例：
 ```html
-	<s:iterator value="users">
+	<s:iterator value="users" k="uk" value="uv">
 		a
-		<s:property type="item" value="user.uid" />
+		<s:property type="item" value="uv.uid" />
 		b
-		<s:property type="item" value="user.username" />
+		<s:property type="item" value="uv.username" />
 		c
 	</s:iterator>
 ```
 对应php语句为
 ```php
-	foreach($GLOBALS['users'] as $item){
+	foreach($GLOBALS['users'] as $uk => $uv){
 		echo "a";
-		echo $item['user']['uid'];
+		echo $uv['uid'];
 		echo "b";
-		echo $item['user']['username'];
+		echo $uv['username'];
 		echo "c";
 	}
 ```
 
-如果需要对属性进行遍历则需要如下写法：
+如果需要嵌套遍历则需要如下写法：
 ```html
-	<s:iterator value="pro">
-		<s:iterator value="#sheng">
-			<s:property value="#sheng" />=><s:property value="" />
+	<s:iterator value="father" k="fk" v="fv">
+		<s:iterator value="fv" k="fvk" v="fvv">
+			<s:property value="fvk" />=><s:property value="fvv" />
 		</s:iterator>
 	</s:iterator>
 ```
 对应php语句为
 ```php
-	foreach($GLOBALS['pro'] as $sheng=>$shi){
-		echo $sheng;
-		echo "=>";
-		echo $shi;//当property的value为空时其值为为当前遍历key=>value里的value。
+	foreach($GLOBALS['father'] as $fk=>$fv){
+		foreach($fv as $fvk => $fvv){
+			echo $fvk."=>".$fvv;//如果想输出value的属性可以用.来分隔，如fvv.username
+		}
 	}
 ```
 #### s:if 标签
