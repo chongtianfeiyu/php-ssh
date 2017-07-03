@@ -5,6 +5,7 @@
 	*		日志：		2017.5.19		实现词法分析makeTree方法，将s:标签提取出来
 	*					2017.5.20		实现语法分析parse功能与工具方法getpointvalue
 	*					2017.5.21		引入插件S功能，添加HookParse类监控解析过程，为Test类提供支持
+	*					2017.7.03		修正了语法解析器的问题，更改使用方法
 	*/
 	class ParseS{
 		public static function makeTree($code){//词法分析
@@ -99,28 +100,23 @@
 			return $resultarr;
 		}
 		public static $pointvalue=array();
-		public static function getpointvalue($arr,$str,$ref=false,$refid=false){
+		public static function getpointvalue($arr,$str){
 			if($str==="")
 				return $arr;
 			$r=explode(".", $str);
 			if(count($r)==1){
-				if(substr($str, 0, 1)=="#")
-					return self::$pointvalue[$str];
 				return $arr[$str];
 			}
 			$c=array_shift($r);
-			if(substr($c,0,1)=='#'){
-				$ap=array_keys($ref);
-				self::$pointvalue[$c]=$ap[$refid];
-				return self::getpointvalue($ref[$ap[$refid]],join(".",$r),$ref,$ap[$refid]);
-			}
-			return self::getpointvalue($arr[$c],join(".",$r),$arr,$c);
+			return self::getpointvalue($arr[$c],join(".",$r));
 		}
 		function parse($tree,$arr){//语法分析生成目标代码
 			//if语句，session调用，$arr调用
 			$result="";
 			$iterator_arr=array();//循环栈
 			$canecho_arr=array();//条件栈
+			$idarr = array();//遍历栈
+			$line_stack = array();//遍历的行栈
 			$line=0;
 			HookParse::$line=&$line;
 			HookParse::$iterator_arr=&$iterator_arr;
@@ -134,52 +130,60 @@
 						}
 						break;
 					case 'iterator':
-						if(count($iterator_arr)==0)
-							array_push($iterator_arr, array(
-								"value"=>$tree[$line]['param']['value'],
-								"id"=>0,
-								"line"=>$line
-							));
-						elseif ($iterator_arr[count($iterator_arr)-1]['line']==$line) {//当前在循环这个iterator
-							continue;
+						array_push($line_stack, $line);
+						$params = $tree[$line]['param'];
+						$value = $params['value'];
+						$k = $params['k'];
+						$v = $params['v'];
+						if(array_key_exists($value, $iterator_arr)){
+							$iterator_arr[$k] = array_keys($iterator_arr[$value][$idarr[$k]]);
+							$iterator_arr[$v] = array_values($iterator_arr[$value][$idarr[$k]]);
+							$idarr[$k] = 0;
+							$idarr[$v] = 0;
+							$hasvalue = ((count($iterator_arr[$k]) > 0) ? 1 : 0);
 						}else{
-							array_push($iterator_arr, array(
-								"value"=>$tree[$line]['param']['value'],
-								"id"=>0,
-								"line"=>$line
-							));
+							$arr = self::getpointvalue($GLOBALS,$value);
+							$iterator_arr[$k] = array_keys($arr);
+							$iterator_arr[$v] = array_values($arr);
+							$idarr[$k] = 0;
+							$idarr[$v] = 0;
+							$hasvalue = ((count($arr) > 0) ? 1 : 0);
 						}
+						if($hasvalue)
+							array_push($canecho_arr, 1);
+						else
+							array_push($canecho_arr, 0);
 						break;
 					case '/iterator':
-						$a=array();
-						foreach ($iterator_arr as $r) {
-							array_push($a, $r['value']);
-							array_push($a, $r['id']);
-						}
-						array_pop($a);//最后一个数组是我们要的
-						if(count(self::getpointvalue($arr,join(".",$a)))==0){//遍历内容不存在
-							array_pop($iterator_arr);
-							continue;
-						}
-						if($iterator_arr[count($iterator_arr)-1]['id']==count(self::getpointvalue($arr,join(".",$a)))-1)
-							array_pop($iterator_arr);
-						else{
-							$iterator_arr[count($iterator_arr)-1]['id']++;
-							$line=$iterator_arr[count($iterator_arr)-1]['line'];
+						$l = array_pop($line_stack);
+						$params = $tree[$l]['param'];
+						$k = $params['k'];
+						$v = $params['v'];
+						if($idarr[$k] + 1 < count($iterator_arr[$k])){
+							$idarr[$k]++;
+							$idarr[$v]++;
+							$line = $l;
+							array_push($line_stack,$l);
+						}else{
+							array_pop($canecho_arr);
+							unset($idarr[$params['k']]);
+							unset($idarr[$params['v']]);
+							unset($iterator_arr[$params['k']]);
+							unset($iterator_arr[$params['v']]);
 						}
 						break;
 					case 'property':
-						if($tree[$line]['param']['type']=="item"){
-							$a=array();
-							foreach ($iterator_arr as $r) {
-								array_push($a, $r['value']);
-								array_push($a, $r['id']);
-							}
-							if(!in_array(0, $canecho_arr))
-								$result.=S::onParamText(self::getpointvalue($arr,join(".",$a).".".$tree[$line]['param']['value']));
-						}else{
-							if(!in_array(0, $canecho_arr))
-								$result.=S::onParamText(self::getpointvalue($arr,$tree[$line]['param']['value']));
+						if(!in_array(0, $canecho_arr)){
+							$params = $tree[$line]['param'];
+							$value = $params['value'];
+							$e = explode(".", $value);
+							$txt = "";
+							if(array_key_exists($e[0], $iterator_arr)){
+								$h=array_shift($e);
+								$txt = self::getpointvalue($iterator_arr,$h.".".$idarr[$h].".".join($e,"."));
+							}else
+								$txt = self::getpointvalue($GLOBALS,$value);
+							$result .= S::onText($txt);
 						}
 						break;
 					case '/property':
