@@ -136,8 +136,8 @@
 						$k = $params['k'];
 						$v = $params['v'];
 						if(array_key_exists($value, $iterator_arr)){
-							$iterator_arr[$k] = array_keys($iterator_arr[$value][$idarr[$k]]);
-							$iterator_arr[$v] = array_values($iterator_arr[$value][$idarr[$k]]);
+							$iterator_arr[$k] = array_keys($iterator_arr[$value][$idarr[$value]]);
+							$iterator_arr[$v] = array_values($iterator_arr[$value][$idarr[$value]]);
 							$idarr[$k] = 0;
 							$idarr[$v] = 0;
 							$hasvalue = ((count($iterator_arr[$k]) > 0) ? 1 : 0);
