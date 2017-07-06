@@ -5,7 +5,6 @@
 	*		日志：		2017.5.19		实现词法分析makeTree方法，将s:标签提取出来
 	*					2017.5.20		实现语法分析parse功能与工具方法getpointvalue
 	*					2017.5.21		引入插件S功能，添加HookParse类监控解析过程，为Test类提供支持
-	*					2017.7.03		修正了语法解析器的问题，更改使用方法
 	*/
 	class ParseS{
 		public static function makeTree($code){//词法分析
@@ -135,9 +134,13 @@
 						$value = $params['value'];
 						$k = $params['k'];
 						$v = $params['v'];
-						if(array_key_exists($value, $iterator_arr)){
-							$iterator_arr[$k] = array_keys($iterator_arr[$value][$idarr[$value]]);
-							$iterator_arr[$v] = array_values($iterator_arr[$value][$idarr[$value]]);
+						$ke2 = explode(".", $value);
+						$ke = $ke2[0];
+						if(array_key_exists($ke, $iterator_arr)){
+							$h = array_shift($ke2);
+							$arrs = self::getpointvalue($iterator_arr,$h.".".$idarr[$h].".".join($ke2,"."));
+							$iterator_arr[$k] = array_keys($arrs);
+							$iterator_arr[$v] = array_values($arrs);
 							$idarr[$k] = 0;
 							$idarr[$v] = 0;
 							$hasvalue = ((count($iterator_arr[$k]) > 0) ? 1 : 0);
