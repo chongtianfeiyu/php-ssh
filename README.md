@@ -15,8 +15,7 @@ Action：
 ```php
 	Controller::doAction("Main.UserAction","login");//对应Action/Main/UserAction.php文件
 ```
-<br>
-Service
+Service：
 ```php
 	Controller::doService("Main.UserService","login");//对应Service/Main/UserService.php文件
 ```
