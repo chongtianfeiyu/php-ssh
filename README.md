@@ -5,6 +5,59 @@
 # 框架流程
 本框架入口文件为index.php，调用过程如图：
 ![image](https://github.com/similing4/php-ssh/blob/master/php-ssh_lct.png)
+# 框架优点
+## 单入口
+所有页面或请求都必须通过 index.php?mod=Mod名 来访问
+## 易分类
+Mod、Action、Service、Dao、View都可以通过类似java的包方式访问，如<br>
+入口链接：index.php?mod=Login.Main 对应Mod/Login/Main.php文件<br>
+Action：
+```php
+	Controller::doAction("Main.UserAction","login");//对应Action/Main/UserAction.php文件
+```
+<br>
+Service
+```php
+	Controller::doService("Main.UserService","login");//对应Service/Main/UserService.php文件
+```
+<br>
+Dao：
+```php
+	import("Dao.UserDao");$d=new UserDao();//对应Dao/UserDao.php文件
+```
+<br>
+View：
+```php
+	Controller::showView("Back.main"); //对应View/Back/main.php文件
+```
+<br>
+举例：
+```php
+	Controller::doAction("LoginAction","isLogined");
+	Controller::doAction("UserAction","getUserList");
+	Controller::showView("header");
+	Controller::showView("index");
+	Controller::showView("footer");
+```
+这是后台一个查询用户的Mod，Mod首先要Controller::doAction("LoginAction","isLogined");，这个Action判断权限是否满足，具体拦截器应写在Filter.php里通过Action直接调用。Action的返回值为要跳转的Mod，如果不需要跳转直接返回1即可。比如没登录，上面那个isLogined就返回Main，结果就直接跳转到index.php?mod=Main了，Mod的后续内容如第2、3、4行就不执行。如果登录了，isLogin就返回1，则继续执行Mod的下一步骤第二行。多个View可以一起在Mod中showView，如3、4、5行，header，index，footer会合并起来成为一个网页。这样就实现了View的分类。
+## 传值方便
+在Service中设置$GLOBALS数组的内容可以传达到本次访问的Action，View的任意位置。View中的S标签也方便了值的调用。<br>
+举例：Service中设置了如下内容：
+```php
+	$GLOBALS['c']['a']=array("1"=>"2","2"=>"3");
+```
+在View中就可以通过如下方法遍历。这里的s标签外形上模仿了java的s标签，但语法却模仿的php的foreach语法。详见S标签的使用方法。
+```php
+	<s:iterator value="c.a" k="ak" v="av">
+		<s:property value="ak" />=><s:property value="av" />
+	</s:iterator>
+```
+s标签可以方便地调用session，get，post中的内容，调用方法也很简单，因为下面这三行代码已在根目录下的index.php中预设了
+```php
+	$GLOBALS['session']=$_SESSION;
+	$GLOBALS['get']=$_GET;
+	$GLOBALS['post']=$_POST;
+```
 # 使用方法
 ## 调用mod：
 index.php?mod=Mod名称<br>
