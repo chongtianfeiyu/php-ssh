@@ -13,7 +13,7 @@
 	}
 	if(!isset($_GET['mod']))
 		$_GET['mod']="Main";
-	if(!preg_match('/^[_0-9a-zA-Z]*$/i',$mod))
+	if(!preg_match('/^[_0-9a-zA-Z\.]*$/i',$_GET['mod']))
 		die("Mod Name Error");
 	require("kernel/Use.php");
 	import("Controller");
@@ -30,5 +30,7 @@
 	$code=ob_get_contents();
 	ob_clean();
 	$GLOBALS['session']=$_SESSION;
+	$GLOBALS['get']=$_GET;
+	$GLOBALS['post']=$_POST;
 	echo ParseS::parse(ParseS::makeTree($code),$GLOBALS);
 ?>
