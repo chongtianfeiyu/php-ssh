@@ -109,7 +109,7 @@
 			$c=array_shift($r);
 			return self::getpointvalue($arr[$c],join(".",$r));
 		}
-		function parse($tree,$arr){//语法分析生成目标代码
+		public static function parse($tree,$arr){//语法分析生成目标代码
 			//if语句，session调用，$arr调用
 			$result="";
 			$iterator_arr=array();//循环栈
@@ -186,6 +186,8 @@
 								$txt = self::getpointvalue($iterator_arr,$h.".".$idarr[$h].".".join($e,"."));
 							}else
 								$txt = self::getpointvalue($GLOBALS,$value);
+							if(isset($params['add']))
+								$txt=$txt+$params['add'];
 							$result .= S::onText($txt);
 						}
 						break;
