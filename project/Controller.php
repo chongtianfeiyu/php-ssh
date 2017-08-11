@@ -17,7 +17,7 @@
 		}
 		public static function doAction($ActionName,$method="doAction",$param=array()){
 			//传入类名执行，务必不能直接或间接通过用户请求控制本参数
-			if(!preg_match('/^[_0-9a-zA-Z]*$/i',$ActionName)||!preg_match('/^[_0-9a-zA-Z]*$/i',$method))
+			if(!preg_match('/^[_0-9a-zA-Z\.]*$/i',$ActionName)||!preg_match('/^[_0-9a-zA-Z\.]*$/i',$method))
 				die("error");
 			if(!file_exists(dirname(__FILE__)."/Action/".$ActionName.".php"))
 				die("error");
@@ -31,6 +31,7 @@
 					Controller::alertErr();
 					echo "<script>location.href='index.php?mod=".$result."';</script>";
 				}
+				die();
 			}else{
 				if(isset($GLOBALS['error']))
 					Controller::alertErr();
@@ -38,7 +39,7 @@
 		}
 		public static function doService($ServiceName,$method="doService",$param=array()){
 			//传入类名执行，务必不能直接或间接通过用户请求控制本参数
-			if(!preg_match('/^[_0-9a-zA-Z]*$/i',$ServiceName)||!preg_match('/^[_0-9a-zA-Z]*$/i',$method))
+			if(!preg_match('/^[_0-9a-zA-Z\.]*$/i',$ServiceName)||!preg_match('/^[_0-9a-zA-Z\.]*$/i',$method))
 				die("error");
 			if(!file_exists(dirname(__FILE__)."/Service/".$ServiceName.".php"))
 				die("error");
@@ -50,7 +51,7 @@
 		public static function showView($viewname){
 			//传入View名执行，务必不能直接或间接通过用户请求控制本参数
 			header("Content-type: text/html; charset=utf-8");
-			if(!file_exists(dirname(__FILE__)."/View/".$viewname.".php"))
+			if(!file_exists(dirname(__FILE__)."/View/".str_replace(".", "/", $viewname).".php"))
 				die("error");
 			import("View.".$viewname);
 		}
@@ -59,7 +60,7 @@
 			if(isset($GLOBALS['error']))
 				echo "<script>alert('".$GLOBALS['error']."');</script>";
 		}
-	}
+	}/*
 	if(isset($_GET['action'])&&isset($_GET['method'])){
 		require("kernel/Use.php");
 		Controller::init();
