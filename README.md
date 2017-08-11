@@ -19,17 +19,14 @@ Service：
 ```php
 	Controller::doService("Main.UserService","login");//对应Service/Main/UserService.php文件
 ```
-<br>
 Dao：
 ```php
 	import("Dao.UserDao");$d=new UserDao();//对应Dao/UserDao.php文件
 ```
-<br>
 View：
 ```php
 	Controller::showView("Back.main"); //对应View/Back/main.php文件
 ```
-<br>
 举例：
 ```php
 	Controller::doAction("LoginAction","isLogined");
