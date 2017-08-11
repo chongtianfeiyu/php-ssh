@@ -19,7 +19,7 @@
 			//传入类名执行，务必不能直接或间接通过用户请求控制本参数
 			if(!preg_match('/^[_0-9a-zA-Z\.]*$/i',$ActionName)||!preg_match('/^[_0-9a-zA-Z\.]*$/i',$method))
 				die("error");
-			if(!file_exists(dirname(__FILE__)."/Action/".$ActionName.".php"))
+			if(!file_exists(dirname(__FILE__)."/Action/".str_replace(".","/",$ActionName).".php"))
 				die("error");
 			if(!class_exists($ActionName,false))
 				import("Action.".$ActionName);
@@ -41,7 +41,7 @@
 			//传入类名执行，务必不能直接或间接通过用户请求控制本参数
 			if(!preg_match('/^[_0-9a-zA-Z\.]*$/i',$ServiceName)||!preg_match('/^[_0-9a-zA-Z\.]*$/i',$method))
 				die("error");
-			if(!file_exists(dirname(__FILE__)."/Service/".$ServiceName.".php"))
+			if(!file_exists(dirname(__FILE__)."/Service/".str_replace(".","/",$ServiceName).".php"))
 				die("error");
 			if(!class_exists($ServiceName,false))
 				import("Service.".$ServiceName);
